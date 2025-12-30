@@ -1,7 +1,6 @@
 //DnQOKPOZDcDpxoNN
 //sadeepa123
 //Sadeepa
-//mongodb+srv://Sadeepa:<db_password>@cluster0.ldrfk9g.mongodb.net/?appName=Cluster0
 //sadeedina2002_db_user
 
 const mongoose = require("mongoose");
