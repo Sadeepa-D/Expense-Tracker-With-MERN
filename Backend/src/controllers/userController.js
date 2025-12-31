@@ -1,16 +1,16 @@
-const user = require("../modules/usermodle");
+const User = require("../modules/usermodle");
 
 const rejisteruser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || email || password) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "Please fill all the fields" });
     }
-    const userexist = await user.findOne({ email });
+    const userexist = await User.findOne({ email });
     if (userexist) {
       return res.status(400).json({ message: "User already exists" });
     }
-    const user = await user.create({ name, email, password });
+    const user = await User.create({ name, email, password });
     if (user) {
       res.status(201).json({
         _id: user.id,
