@@ -1,4 +1,5 @@
 const User = require("../models/usermodle");
+const bcrypt = require("bcryptjs");
 
 const Saveuser = async (req, res) => {
   try {
@@ -10,7 +11,8 @@ const Saveuser = async (req, res) => {
     if (userexist) {
       return res.status(400).json({ message: "User already exists" });
     }
-    const user = new User({ name, email, password });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashedPassword });
     await user.save();
     res.status(201).json({ message: "User save Sucessfully!" });
   } catch (error) {
