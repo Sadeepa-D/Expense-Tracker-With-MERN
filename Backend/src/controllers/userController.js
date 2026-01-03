@@ -63,11 +63,7 @@ const getDashboard = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not Found" });
     }
-    res.status(200).json({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-    });
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
