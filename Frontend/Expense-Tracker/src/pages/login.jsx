@@ -1,14 +1,57 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("Johnnybr");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    if (!email || !password) {
+      setError("Please fil all the fields!");
+      setLoading(false);
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/user/login",
+        {
+          email,
+          password,
+        }
+      );
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", "true");
+      }
+
+      console.log("Login successful:", response.data);
+
+      // Redirect to dashboard
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      console.log("Login error response:", error.response?.data);
+      console.log("Status:", error.response?.status);
+      if (error.response?.data?.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
     console.log("Login attempt with:", { email, password, rememberMe });
   };
 
@@ -135,17 +178,18 @@ export default function LoginPage() {
           </p>
 
           {/* Login Form */}
-          <div>
+          <form onSubmit={handleLogin}>
             {/* Email Input */}
             <div className="mb-4">
               <label className="block text-gray-600 text-sm mb-2">Email</label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 bg-white"
-                  placeholder="Email"
+                  placeholder="Enter Your Email"
+                  required
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500">
                   @
@@ -165,6 +209,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 bg-white"
                   placeholder="Password"
+                  required
                 />
                 <button
                   type="button"
@@ -187,25 +232,33 @@ export default function LoginPage() {
                 />
                 <span className="text-gray-600 text-sm">Remember Me</span>
               </label>
-              <button className="text-blue-600 text-sm hover:underline">
+              <button
+                type="button"
+                className="text-blue-600 text-sm hover:underline"
+              >
                 Recovery Password
               </button>
             </div>
 
             {/* Login Button */}
             <button
+              type="submit"
+              disabled={loading}
               onClick={handleLogin}
               className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors mb-4"
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
-          </div>
+          </form>
 
           {/* Sign Up Link */}
           <p className="text-center text-gray-600 text-sm mt-8">
             Don't have an account yet?{" "}
             <Link to="/register">
-              <button className="text-blue-600 font-semibold hover:underline">
+              <button
+                type="button"
+                className="text-blue-600 font-semibold hover:underline"
+              >
                 Sign Up
               </button>
             </Link>

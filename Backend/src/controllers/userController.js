@@ -1,6 +1,6 @@
 const User = require("../models/usermodle");
 const bcrypt = require("bcryptjs");
-const fwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const Saveuser = async (req, res) => {
   try {

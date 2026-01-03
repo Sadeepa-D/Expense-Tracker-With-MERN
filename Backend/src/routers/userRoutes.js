@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const authMiddleware = require("../middleware/authMidlleware");
+const { authMiddleware } = require("../middleware/authMidlleware");
 const {
   Saveuser,
   viewuser,

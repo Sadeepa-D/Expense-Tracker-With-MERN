@@ -348,7 +348,7 @@ export default function ExpenseTrackerSignup() {
           {/* Login Link */}
           <p className="text-center mt-8 text-gray-600 select-text">
             Do you already Have an account?{" "}
-            <Link to="/login">
+            <Link to="/">
               <button className="text-blue-600 font-semibold hover:underline">
                 Sign In
               </button>
