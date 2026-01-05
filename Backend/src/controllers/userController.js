@@ -22,15 +22,6 @@ const Saveuser = async (req, res) => {
   }
 };
 
-const viewuser = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.status(201).json(users);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 const loginuser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -69,4 +60,4 @@ const getDashboard = async (req, res) => {
   }
 };
 
-module.exports = { Saveuser, viewuser, getDashboard, loginuser };
+module.exports = { Saveuser, getDashboard, loginuser };
