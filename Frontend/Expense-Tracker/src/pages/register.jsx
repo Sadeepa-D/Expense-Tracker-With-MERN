@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DollarSign, TrendingDown } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 
 export default function ExpenseTrackerSignup() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,15 +14,42 @@ export default function ExpenseTrackerSignup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = () => {
-    console.log("Signup attempted with:", {
-      name,
-      email,
-      password,
-      confirmPassword,
-      agreeToTerms,
-    });
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    if (!name || !email || !password || !confirmPassword) {
+      toast.error("Please fill all the required fields!");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+
+    if (!agreeToTerms) {
+      toast.error("You must agree to the Terms & Conditions.");
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        "http://localhost:5000/api/user/register",
+        { name, email, password }
+      );
+      console.log("response:", response.data);
+      toast.success("Account created successfully!");
+      setTimeout(() => navigate("/"), 1500);
+    } catch (err) {
+      console.error(err);
+      const errorMessage =
+        err.response?.data?.message || "Something went wrong.";
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -158,7 +189,7 @@ export default function ExpenseTrackerSignup() {
           </div>
 
           {/* Signup Form */}
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSignup}>
             {/* Name Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 select-text">
@@ -169,7 +200,7 @@ export default function ExpenseTrackerSignup() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder="Sadeepa Dinakara"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition select-text"
                 />
               </div>
@@ -185,7 +216,7 @@ export default function ExpenseTrackerSignup() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Johnnybr"
+                  placeholder="sadeepa@test.com"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition select-text"
                 />
                 <span className="absolute right-4 top-3.5 text-blue-600 font-medium select-text">
@@ -309,32 +340,48 @@ export default function ExpenseTrackerSignup() {
             </div>
 
             {/* Terms & Conditions */}
+            {/* Terms & Conditions */}
             <div className="flex items-center">
-              <label className="flex items-center cursor-pointer">
+              <div className="flex items-center">
                 <input
+                  id="terms-checkbox" // Added ID
                   type="checkbox"
                   checked={agreeToTerms}
                   onChange={(e) => setAgreeToTerms(e.target.checked)}
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                 />
-                <span className="ml-2 text-sm text-gray-600 select-text">
+                {/* Label is ONLY for the text "I agree to the", not the link */}
+                <label
+                  htmlFor="terms-checkbox"
+                  className="ml-2 text-sm text-gray-600 cursor-pointer select-none"
+                >
                   I agree to the{" "}
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:text-blue-700 font-medium"
-                  >
-                    Terms & Conditions
-                  </a>
-                </span>
-              </label>
+                </label>
+              </div>
+
+              {/* Link is outside the label so it doesn't trigger the checkbox */}
+              <button
+                type="button"
+                onClick={() => toast("Terms modal would open here")}
+                className="ml-1 text-sm text-blue-600 hover:text-blue-700 font-medium hover:underline"
+              >
+                Terms & Conditions
+              </button>
             </div>
 
             {/* Signup Button */}
             <button
+              type="submit"
+              disabled={loading}
               onClick={handleSignup}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl select-text"
+              className={`w-full py-3 rounded-lg font-semibold transition-colors shadow-lg hover:shadow-xl select-text
+                ${
+                  loading
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
             >
-              Sign Up
+              {loading ? "Creating Account..." : "Sign Up"}
             </button>
 
             {/* Google Sign In */}
@@ -351,6 +398,7 @@ export default function ExpenseTrackerSignup() {
           </p>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }
