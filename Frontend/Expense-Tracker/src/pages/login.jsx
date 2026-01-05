@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -18,7 +19,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     if (!email || !password) {
-      setError("Please fil all the fields!");
+      toast.error("Please fil all the fields!");
       setLoading(false);
       return;
     }
@@ -47,7 +48,7 @@ export default function LoginPage() {
       if (error.response?.data?.message) {
         setError(error.response.data.message);
       } else {
-        setError("Login failed. Please try again.");
+        toast.error("Login failed. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -57,6 +58,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen">
+      <Toaster />
       {/* Left Side - Blue Section */}
       <div className="w-1/2 bg-gradient-to-br from-blue-600 to-blue-700 p-12 flex flex-col justify-between relative overflow-hidden">
         {/* Decorative elements */}
