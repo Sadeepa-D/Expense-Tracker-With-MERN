@@ -22,7 +22,7 @@ export default function ExpenseTrackerSignup() {
   };
 
   return (
-    <div className="flex h-screen select-text">
+    <div className="flex h-screen select-text h-auto">
       {/* Left Side - Hero Section */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 relative overflow-hidden">
         {/* Decorative Elements */}
@@ -132,11 +132,6 @@ export default function ExpenseTrackerSignup() {
               Track expenses, set budgets, and achieve your financial goals with
               ease
             </p>
-            <div className="flex gap-2 justify-center mt-6">
-              <div className="w-8 h-2 bg-white rounded-full"></div>
-              <div className="w-2 h-2 bg-white bg-opacity-40 rounded-full"></div>
-              <div className="w-2 h-2 bg-white bg-opacity-40 rounded-full"></div>
-            </div>
           </div>
         </div>
       </div>
@@ -163,7 +158,7 @@ export default function ExpenseTrackerSignup() {
           </div>
 
           {/* Signup Form */}
-          <div className="space-y-5">
+          <form className="space-y-5">
             {/* Name Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 select-text">
@@ -343,7 +338,7 @@ export default function ExpenseTrackerSignup() {
             </button>
 
             {/* Google Sign In */}
-          </div>
+          </form>
 
           {/* Login Link */}
           <p className="text-center mt-8 text-gray-600 select-text">

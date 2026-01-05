@@ -141,13 +141,6 @@ export default function LoginPage() {
             <br />
             your financial goals with ease
           </p>
-
-          {/* Pagination Dots */}
-          <div className="flex justify-center gap-2 mt-6">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-          </div>
         </div>
       </div>
 
