@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import DashboardHeader from "../components/DashBoardHeaderComponent";
 import BudgetOverviewCard from "../components/BudgetOverviewCard";
 import ExpenseList from "../components/ExpensesListComponent";
@@ -7,6 +9,7 @@ import BarChartCard from "../components/BarcharCard";
 import SalaryLimitDialog from "../components/BudgetLimitCard";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [user] = useState({
     name: "John Doe",
     email: "gihankaveesha@gmail.com",
@@ -59,7 +62,9 @@ const Dashboard = () => {
   };
 
   const handleLogout = () => {
-    console.log("Logging out...");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
   };
 
   return (
