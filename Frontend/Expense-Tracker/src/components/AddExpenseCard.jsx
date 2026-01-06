@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PlusCircle, X } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 
 const AddExpenseCard = ({ onAddExpense }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,14 +10,42 @@ const AddExpenseCard = ({ onAddExpense }) => {
     description: "",
     date: new Date().toISOString().split("T")[0],
   });
+  const [erorr, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (formData.category && formData.amount) {
-      onAddExpense({
-        ...formData,
-        id: Date.now(),
-        amount: parseFloat(formData.amount),
+  const handleSubmit = async () => {
+    if (!formData.category || !formData.amount) {
+      toast.error("Please Fill Reqiured Fields!");
+      return;
+    }
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please Login First!");
+        return;
+      }
+      const response = await fetch("http://localhost:5000/api/expenses/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // <--- CRITICAL: Identifies the user
+        },
+        body: JSON.stringify({
+          category: formData.category,
+          amount: Number(formData.amount), // Ensure amount is a number
+          description: formData.description,
+          date: formData.date,
+        }),
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error("Failed to add expense!");
+      }
+      onAddExpense(data);
+
       setFormData({
         category: "",
         amount: "",
@@ -24,6 +53,11 @@ const AddExpenseCard = ({ onAddExpense }) => {
         date: new Date().toISOString().split("T")[0],
       });
       setIsOpen(false);
+    } catch (err) {
+      toast.error("Add expense Failed!");
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,6 +77,7 @@ const AddExpenseCard = ({ onAddExpense }) => {
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg">
+      <Toaster />
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">New Expense</h3>
         <button
@@ -52,6 +87,7 @@ const AddExpenseCard = ({ onAddExpense }) => {
           <X className="w-5 h-5" />
         </button>
       </div>
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
