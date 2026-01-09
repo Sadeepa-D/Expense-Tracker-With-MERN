@@ -49,12 +49,12 @@ const ExpenseList = ({
             }
           `}</style>
 
-          <div className="flex-shrink-0 w-80">
+          <div key="add-expense-card" className="flex-shrink-0 w-80">
             <AddExpenseCard onAddExpense={onAddExpense} />
           </div>
 
           {expenses.map((expense) => (
-            <div key={expense.id} className="flex-shrink-0 w-80">
+            <div key={expense._id} className="flex-shrink-0 w-80">
               <ExpenseCard
                 expense={expense}
                 onEdit={onEditExpense}

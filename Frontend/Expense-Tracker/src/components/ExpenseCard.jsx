@@ -37,7 +37,7 @@ const ExpenseCard = ({ expense, onEdit, onDelete }) => {
         </div>
       </div>
       <p className="text-2xl font-bold text-gray-800 mb-1">
-        ${expense.amount.toFixed(2)}
+        ${(expense.amount || 0).toFixed(2)}{" "}
       </p>
       <p className="text-sm text-gray-600 mb-1">{expense.description}</p>
       <p className="text-xs text-gray-400">

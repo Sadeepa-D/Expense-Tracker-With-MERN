@@ -1,17 +1,20 @@
-import Expense from "../models/expensemodle.js";
+const Expense = require("../models/expensemodle");
+const User = require("../models/usermodle");
 
-export const addexpense = async (req, res) => {
+const addexpense = async (req, res) => {
   try {
-    const { description, cateogry, amount, date } = req.body;
-    if (!description || !amount || !cateogry) {
+    const { description, category, amount, date } = req.body;
+    if (!amount || !category) {
       return res.status(400).json({ message: "Please Fill all the field" });
     }
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
     const expensess = new Expense({
-      user: req.user._id,
+      user: user._id,
       description,
       amount,
-      cateogry,
-      date: date || new date(),
+      category,
+      date: date || new Date(),
     });
     await expensess.save();
     res.status(201).json({ message: "Expensess add Sucessfully!" });
@@ -19,3 +22,4 @@ export const addexpense = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+module.exports = { addexpense };

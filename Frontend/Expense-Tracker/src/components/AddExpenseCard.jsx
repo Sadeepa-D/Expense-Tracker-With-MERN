@@ -10,7 +10,6 @@ const AddExpenseCard = ({ onAddExpense }) => {
     description: "",
     date: new Date().toISOString().split("T")[0],
   });
-  const [erorr, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -29,11 +28,11 @@ const AddExpenseCard = ({ onAddExpense }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // <--- CRITICAL: Identifies the user
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           category: formData.category,
-          amount: Number(formData.amount), // Ensure amount is a number
+          amount: Number(formData.amount),
           description: formData.description,
           date: formData.date,
         }),
@@ -55,7 +54,7 @@ const AddExpenseCard = ({ onAddExpense }) => {
       setIsOpen(false);
     } catch (err) {
       toast.error("Add expense Failed!");
-      setError(err.message);
+      console.log(err);
     } finally {
       setLoading(false);
     }
