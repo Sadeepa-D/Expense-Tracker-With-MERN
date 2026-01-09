@@ -22,4 +22,16 @@ const addexpense = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-module.exports = { addexpense };
+
+const viewexpense = async (req, res) => {
+  try {
+    const userid = req.user.userId;
+    const expenses = await Expense.find({ user: userid }).sort({ date: -1 });
+    res.status(200).json({ expenses });
+  } catch (error) {
+    console.error("Error fetching expenses:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+module.exports = { addexpense, viewexpense };

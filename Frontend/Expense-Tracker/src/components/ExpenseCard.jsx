@@ -29,7 +29,7 @@ const ExpenseCard = ({ expense, onEdit, onDelete }) => {
             <Edit className="w-4 h-4" />
           </button>
           <button
-            onClick={() => onDelete(expense.id)}
+            onClick={() => onDelete(expense._id)}
             className="text-red-500 hover:text-red-700"
           >
             <Trash2 className="w-4 h-4" />

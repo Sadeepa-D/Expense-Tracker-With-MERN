@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import DashboardHeader from "../components/DashBoardHeaderComponent";
@@ -17,11 +17,46 @@ const Dashboard = () => {
   const [salaryLimit, setSalaryLimit] = useState(5000);
   const [showSalaryDialog, setShowSalaryDialog] = useState(false);
   const [expenses, setExpenses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const token = localStorage.getItem("token");
+
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        "http://localhost:5000/api/expenses/viewexpense",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        toast.error("Failed to Load Expenses!");
+        return;
+      }
+      const data = await response.json();
+      setExpenses(data.expenses || []);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load expenses");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [token]);
 
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-  const handleAddExpense = (expense) => {
-    setExpenses([...expenses, expense]);
+  const handleAddExpense = async (expense) => {
+    await fetchExpenses();
+    toast.success("Expense added successfully!");
   };
 
   const handleDeleteExpense = (id) => {
