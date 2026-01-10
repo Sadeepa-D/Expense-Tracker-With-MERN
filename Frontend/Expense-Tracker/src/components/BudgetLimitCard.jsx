@@ -1,18 +1,49 @@
 import React, { useState } from "react";
 import { DollarSign, X } from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
+import axios from "axios";
 
 const BudgetLimitDialog = ({ isOpen, onClose, currentLimit, onSave }) => {
   const [limit, setLimit] = useState(currentLimit);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
-    onSave(parseFloat(limit));
+  const handleSave = async () => {
+    const token = localStorage.getItem("token");
+    const parsedlimit = parseFloat(limit);
+    if (!limit || limit.toString().trim() === "") {
+      return toast.error("Salary limit is required");
+    }
+    if (isNaN(parsedlimit)) {
+      return toast.error("Please enter a valid number");
+    }
+    if (parsedlimit < 0) {
+      return toast.error("Salary limit cannot be negative");
+    }
+    try {
+      setLoading(true);
+      const response = await axios.put(
+        "http://localhost:5000/api/user/updatesalary",
+        { newsalarylimit: parsedlimit },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      toast.success("Salary Limit Updated!");
+    } catch (error) {
+      toast.error("Failed to update salary limit");
+      setError(error.message || "Failed to update salary limit");
+    } finally {
+      setLoading(false);
+    }
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <Toaster />
       <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-gray-800">

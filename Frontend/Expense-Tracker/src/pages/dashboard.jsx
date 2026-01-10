@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import DashboardHeader from "../components/DashBoardHeaderComponent";
 import BudgetOverviewCard from "../components/BudgetOverviewCard";
 import ExpenseList from "../components/ExpensesListComponent";
@@ -75,6 +75,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <Toaster />
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <DashboardHeader

@@ -60,4 +60,22 @@ const getDashboard = async (req, res) => {
   }
 };
 
-module.exports = { Saveuser, getDashboard, loginuser };
+const updatesalary = async (req, res) => {
+  try {
+    const userid = req.user.userId;
+    const { newsalarylimit } = req.body;
+    const updateduser = await User.findByIdAndUpdate(
+      userid,
+      { salaryLimit: newsalarylimit },
+      { new: true, runValidators: true }
+    );
+    if (!updateduser) {
+      return res.status(404).json({ message: "Salary update Failed!" });
+    }
+    res.status(200).json({ message: "Salary Updated" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+module.exports = { Saveuser, getDashboard, loginuser, updatesalary };
