@@ -32,13 +32,17 @@ const BudgetLimitDialog = ({ isOpen, onClose, currentLimit, onSave }) => {
         }
       );
       toast.success("Salary Limit Updated!");
+      if (onSave) {
+        await onSave(parsedlimit);
+        onClose();
+      }
     } catch (error) {
       toast.error("Failed to update salary limit");
       setError(error.message || "Failed to update salary limit");
     } finally {
       setLoading(false);
     }
-    onClose();
+    
   };
 
   return (
