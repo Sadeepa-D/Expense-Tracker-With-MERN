@@ -78,4 +78,23 @@ const updatesalary = async (req, res) => {
   }
 };
 
-module.exports = { Saveuser, getDashboard, loginuser, updatesalary };
+const getbudgetlimit = async (req, res) => {
+  const userid = req.user.userId;
+  try {
+    const response = await User.findById(userid).select("salaryLimit");
+    if (!response) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ salaryLimit: response.salaryLimit });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+module.exports = {
+  Saveuser,
+  getDashboard,
+  loginuser,
+  updatesalary,
+  getbudgetlimit,
+};

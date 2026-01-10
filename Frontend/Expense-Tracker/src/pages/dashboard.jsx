@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 import DashboardHeader from "../components/DashBoardHeaderComponent";
 import BudgetOverviewCard from "../components/BudgetOverviewCard";
 import ExpenseList from "../components/ExpensesListComponent";
@@ -10,11 +11,11 @@ import SalaryLimitDialog from "../components/BudgetLimitCard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [user] = useState({
+  const [user, setUser] = useState({
     name: "",
     email: "",
   });
-  const [salaryLimit, setSalaryLimit] = useState(5000);
+  const [salaryLimit, setSalaryLimit] = useState(0);
   const [showSalaryDialog, setShowSalaryDialog] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +49,6 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchExpenses();
-  }, [token]);
-
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
 
   const handleAddExpense = async (expense) => {
@@ -72,6 +69,60 @@ const Dashboard = () => {
     localStorage.removeItem("user");
     navigate("/");
   };
+
+  const getbudget = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/user/salarylimit",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSalaryLimit(response.data.salaryLimit || 0);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load budget");
+    }
+  };
+
+  // Fetch user data
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/user/dashboard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setUser({
+        name: response.data.name,
+        email: response.data.email,
+      });
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Failed to load user data");
+    }
+  };
+  const handleSaveSalaryLimit = async (newLimit) => {
+    setSalaryLimit(newLimit);
+    // Optionally refetch to ensure data is synced
+    await fetchBudgetLimit();
+  };
+
+  // Load all data on mount
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+      return;
+    }
+    fetchUserData();
+    getbudget();
+    fetchExpenses();
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
