@@ -56,8 +56,31 @@ const Dashboard = () => {
     toast.success("Expense added successfully!");
   };
 
-  const handleDeleteExpense = (id) => {
-    setExpenses(expenses.filter((exp) => exp.id !== id));
+  const handleDeleteExpense = async (id) => {
+    if (!window.confirm("Are You Sure to delete This Expense")) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/expenses/deleteexpense/${id}`,
+        {
+          method: "delete",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        toast.error("Failed to delete expense");
+      }
+      setExpenses((prevExpenses) =>
+        prevExpenses.filter((expense) => expense._id !== id)
+      );
+      toast.success("Expense deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      toast.error("Failed to delete expense. Please check your connection.");
+    }
   };
 
   const handleEditExpense = (expense) => {
@@ -110,7 +133,7 @@ const Dashboard = () => {
   const handleSaveSalaryLimit = async (newLimit) => {
     setSalaryLimit(newLimit);
     // Optionally refetch to ensure data is synced
-    await fetchBudgetLimit();
+    await getbudget();
   };
 
   // Load all data on mount

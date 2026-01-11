@@ -8,6 +8,7 @@ const ExpenseList = ({
   onEditExpense,
   onDeleteExpense,
 }) => {
+  
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">

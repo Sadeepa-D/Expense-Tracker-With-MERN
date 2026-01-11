@@ -26,7 +26,9 @@ const addexpense = async (req, res) => {
 const viewexpense = async (req, res) => {
   try {
     const userid = req.user.userId;
-    const expenses = await Expense.find({ user: userid }).sort({ date: -1 });
+    const expenses = await Expense.find({ user: userid }).sort({
+      createdAt: -1,
+    });
     res.status(200).json({ expenses });
   } catch (error) {
     console.error("Error fetching expenses:", error);
@@ -34,4 +36,25 @@ const viewexpense = async (req, res) => {
   }
 };
 
-module.exports = { addexpense, viewexpense };
+const editexpense = async (req, res) => {};
+
+const deleteexpense = async (req, res) => {
+  const { expenseid } = req.params;
+  if (!expenseid) {
+    return res.status(400).json({ message: "expense id required!" });
+  }
+  try {
+    const response = await Expense.findByIdAndDelete(expenseid);
+    if (!response) {
+      return res.status(404).json({ message: "expense Not Found!" });
+    }
+    return res.status(200).json({ message: "Expense delete Sucessfully!" });
+  } catch (error) {
+    console.error("Delete error:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
+module.exports = { addexpense, viewexpense, editexpense, deleteexpense };
